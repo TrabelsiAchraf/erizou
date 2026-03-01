@@ -8,10 +8,13 @@
 import Foundation
 
 public protocol HTTPClient {
+    var urlSession: URLSession { get }
     func sendRequest<T: Decodable>(endpoint: Endpoint, responseModel: T.Type?) async throws -> T?
 }
 
 public extension HTTPClient {
+
+    var urlSession: URLSession { .shared }
 
     private static var OK_200: ClosedRange<Int> { 200...299 }
     private static var NOK_401: Int { 401 }
@@ -27,7 +30,7 @@ public extension HTTPClient {
 
         do {
             let startTime = DispatchTime.now().uptimeNanoseconds
-            let (data, response) = try await URLSession.shared.data(for: request, delegate: nil)
+            let (data, response) = try await urlSession.data(for: request, delegate: nil)
             guard let response = response as? HTTPURLResponse else {
                 throw RequestError.noResponse
             }
@@ -45,6 +48,8 @@ public extension HTTPClient {
             case Self.NOK_401: throw RequestError.unauthorized
             default: throw RequestError.unexpectedStatusCode
             }
+        } catch let error as RequestError {
+            throw error
         } catch {
             throw RequestError.unknown
         }

@@ -17,7 +17,7 @@ Erizou is a lightweight network framework for simplifying HTTP calls in iOS proj
 - [ ] Documentation
 - [ ] Retry Requests
 - [ ] Network Reachability
-- [ ] Unit and Integration Tests
+- [x] Unit Tests
 
 ## 🚨 Requirements
 - iOS 16.0+ 
