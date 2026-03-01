@@ -9,14 +9,11 @@ Erizou is a lightweight network framework for simplifying HTTP calls in iOS proj
 
 - [x] Chainable Request / Response Methods
 - [x] Swift Concurrency Support
-
-### 🐌 Future Features
-
-- [ ] Upload File / Data
-- [ ] Download File using Request
-- [ ] Documentation
-- [ ] Retry Requests
-- [ ] Network Reachability
+- [x] Upload File / Data
+- [x] Download File using Request
+- [x] DocC Documentation
+- [x] Retry Requests (exponential backoff)
+- [x] Network Reachability
 - [x] Unit Tests
 
 ## 🚨 Requirements
@@ -40,7 +37,38 @@ https://github.com/TrabelsiAchraf/erizou.git
 
 ## 📖 Documentation
 
-100% not documented yet but I'll get there 🤷‍♂️
+All public types and methods are documented with DocC-compatible comments. Open the package in Xcode and select **Product › Build Documentation** to generate the full reference.
+
+### Quick Reference
+
+| Method | Description |
+|---|---|
+| `sendRequest(endpoint:responseModel:)` | Send a request and decode the response |
+| `upload(endpoint:data:responseModel:)` | Upload raw `Data` |
+| `upload(endpoint:fileURL:responseModel:)` | Upload a file from a local URL |
+| `download(endpoint:)` | Download a file and return its local cache URL |
+
+### Retry
+
+Set `retryCount` on your `HTTPClient` conformer to automatically retry on network failures with exponential backoff:
+
+```swift
+struct APIService: HTTPClient {
+    var retryCount: Int { 3 }      // up to 3 retries
+    var retryDelay: TimeInterval { 1.0 }  // 2s, 4s, 8s backoff
+}
+```
+
+### Network Reachability
+
+```swift
+let reachability = NetworkReachability()
+
+// Combine / SwiftUI
+reachability.$isConnected
+    .sink { print("Connected:", $0) }
+    .store(in: &cancellables)
+```
 
 ### Author
 
